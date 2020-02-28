@@ -11,7 +11,7 @@ EXTENSION_VERSION = '0.1'
 EXTENSION_NAME_VERSION = EXTENSION_NAME + ' ' + EXTENSION_VERSION
 
 # Configure the logger
-LOG_LEVEL = INFO
+LOG_LEVEL = ERROR
 FMT = '%(asctime)s:%(msecs)03d [%(levelname)s] %(message)s'
 DATEFMT = '%H:%M:%S'
 
@@ -25,7 +25,7 @@ NEWLINE = '\r\n'
 class BurpExtender(IBurpExtender, ISessionHandlingAction, ITab):
     def registerExtenderCallbacks(self, callbacks):
         """IBurpExtender"""
-        callbacks.setExtensionName(EXTENSION_NAME_VERSION)
+        callbacks.setExtensionName(EXTENSION_NAME)
         
         self._helpers = callbacks.getHelpers()
         self._callbacks = callbacks
@@ -170,67 +170,95 @@ class BurpExtender(IBurpExtender, ISessionHandlingAction, ITab):
     def build_gui(self):
         component = JPanel(GridBagLayout())
         c = GridBagConstraints()
+        c.fill = GridBagConstraints.HORIZONTAL
+        
+        c.gridwidth = 2
         
         # 1st line
-        c.fill = GridBagConstraints.HORIZONTAL
-        c.gridx = 0
         c.gridy = 0
-        component.add(JLabel('Name of the anti-CSRF token (or part of):'), c)
+        
+        c.gridx = 0
+        component.add(JLabel('Don\'t forget to create a Session handling rule invoking this Burp extension under Project options > Sessions and to configure the tool and URL scopes.'), c)
+        
+        c.gridwidth = 1
+        
+        # 2nd line
+        c.gridy = 1
+        
+        c.gridx = 0
+        component.add(JLabel(' '), c)
+        
+        # 3rd line
+        c.gridy = 2
+        
+        c.gridx = 0
+        component.add(JLabel('Name of the anti-CSRF token, can also be a substring of the name of the anti-CSRF token:'), c)
         
         self._csrf_name_contains_field = JTextField('csrf', 40)
         c.gridx = 1
-        c.gridy = 0
         component.add(self._csrf_name_contains_field, c)
         
-        # 2nd line
+        # 4th line
+        c.gridy = 3
+        
         c.gridx = 0
-        c.gridy = 1
-        component.add(JLabel('Start marker of the anti-CSRF token in the response:'), c)
+        component.add(JLabel('Start marker of the anti-CSRF token in the response, #csrf_name# is replaced by the name of the anti-CSRF token:'), c)
         
         self._csrf_start_marker_field = JTextField('name="' + CSRF_NAME_PLACEHOLDER + '" value="', 40)
         c.gridx = 1
-        c.gridy = 1
         component.add(self._csrf_start_marker_field, c)
         
-        # 3rd line
+        # 5th line
+        c.gridy = 4
+        
         c.gridx = 0
-        c.gridy = 2
-        component.add(JLabel('End marker of the anti-CSRF token in the response:'), c)
+        component.add(JLabel('End marker of the anti-CSRF token in the response, #csrf_name# is replaced by the name of the anti-CSRF token:'), c)
         
         self._csrf_end_marker_field = JTextField('"', 40)
         c.gridx = 1
-        c.gridy = 2
         component.add(self._csrf_end_marker_field, c)
         
-        # 4rd line
+        # 6th line
+        c.gridy = 5
+        
         c.gridx = 0
-        c.gridy = 3
+        component.add(JLabel(' '), c)
+        
+        # 7th line
+        c.gridy = 6
+        
+        c.gridx = 0
         component.add(JLabel('HTML decode the anti-CSRF token:'), c)
         
         self._do_html_decode = JCheckBox("", True)
         c.gridx = 1
-        c.gridy = 3
         component.add(self._do_html_decode, c)
         
-        # 5rd line
+        # 8th line
+        c.gridy = 7
+        
         c.gridx = 0
-        c.gridy = 4
         component.add(JLabel('URL decode the anti-CSRF token:'), c)
         
         self._do_url_decode = JCheckBox("", True)
         c.gridx = 1
-        c.gridy = 4
         component.add(self._do_url_decode, c)
         
-        # 6rd line
+        # 9th line
+        c.gridy = 8
+        
         c.gridx = 0
-        c.gridy = 5
         component.add(JLabel('URL encode the anti-CSRF token:'), c)
         
         self._do_url_encode = JCheckBox("", True)
         c.gridx = 1
-        c.gridy = 5
         component.add(self._do_url_encode, c)
+        
+        # 10th line
+        c.gridy = 9
+        
+        c.gridx = 0
+        component.add(JLabel(' '), c)
         
         self._callbacks.customizeUiComponent(component)
         self._ui_component = component
