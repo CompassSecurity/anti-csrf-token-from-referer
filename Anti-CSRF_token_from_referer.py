@@ -73,7 +73,7 @@ class BurpExtender(IBurpExtender, ISessionHandlingAction, ITab):
             parameter_type = parameter.getType()
             self._logger.debug('Parameter found: (%s, %d)', parameter_name, parameter_type)
             
-            if csrf_name_contains in parameter_name:
+            if csrf_name_contains in parameter_name and parameter_type != IParameter.PARAM_COOKIE:
                 csrf_name = parameter_name
                 csrf_type = parameter_type
                 self._logger.info('Anti-CSRF parameter found: %s', parameter_name)
